@@ -72,13 +72,15 @@ definição de atributos privados
 ponte da interação do usuario com a página e a criação de modelos.
 
  !!Sem tipagem typescript adota o tipo any implicitamente  
- !!typescript vem com tipos para manipular elementos de DOM
- HTMLInputElement 
+ !!typescript vem com tipos para manipular elementos de DOM: HTMLInputElement 
 
- !!Typescript tem suporte a tipos Generics
+ !!Typescript tem suporte a tipos Generics:
+ ```js
  export class Negociacoes{
     private negociacoes: Array<Negociacao> = []
 }
+```
+ 
 
 #ReadonlyArray 
 Definir um array somente leitura
@@ -86,18 +88,14 @@ Definir um array somente leitura
 #formatação de datas usando Intl
 Intl.DateTimeFormat().format(negociacao.data)
 
-#Modificador protected:
-Só a classe que criou o atributo ou método tem acesso, mas as classes 
-filhas tmb podem ter acesso.
-
 >>>>>>>Parte 2
-Agora iremos criar um microframework para renderizar na tela os dados das 
-negociacoes:
+Agora iremos criar um microframework para renderizar na tela os dados das negociacoes:
 
 #Modificador protected:
 Quando trabalhamos com herança e usamos o modificador protected dizemos:
 Só a classe que criou tem acesso, mas as classes filhas tmb podem ter acesso.  
 
+```js
 import {View} from "./view.js"
 export class MensagemView extends View<string> {
 
@@ -105,22 +103,20 @@ export class MensagemView extends View<string> {
         return`<p class="alert alert-info">${model}</p>`
     }
 }
+```
 
 #Abstract class: 
-Em uma classe abstrata não podemos criar uma instância diretamente dela, 
-somente se uma classe herdar, assim posso criar uma instancia da classe filha.
+Em uma classe abstrata não podemos criar uma instância diretamente dela, somente se uma classe herdar, assim posso criar uma instancia da classe filha.
 Toda classe abstrata pode ter nenhum, um ou mais metodos abstratos:
 
 #Metodos abstratos:
-Metodo que a classe pai não sabe como será implementado, é responsabilidade da 
-classe filha:
+Metodo que a classe pai não sabe como será implementado, é responsabilidade da classe filha:
 ```js
 abstract template(model: T): string 
 ```
 #Metodos protected abstract:
 Só a classe pai e as classes filhas podem ter acesso ao método.
-Métodos declarados na classe pai como protected não podem ser modificados para 
-private, somente podemos torar public ou manter como protected;
+Métodos declarados na classe pai como protected não podem ser modificados para private, somente podemos torar public ou manter como protected;
 ```js
 export abstract class View <T>{
     protected elemento: HTMLElement
@@ -161,45 +157,48 @@ export class MensagemView extends View<string> {
 ```
 #Enumeration: 
 É um namespace que definimos para que seja visível por toda aplicação
->>>enum
+>>> enum
 ```js
 export enum DiasDaSemana{
-    DOMINGO,
-    SEGUNDA,
-    TERÇA,
-    QUARTA,
-    QUINTA,
-    SEXTA,
-    SABADO
+    DOMINGO = 0,
+    SEGUNDA = 1,
+    TERÇA = 2,
+    QUARTA = 3,
+    QUINTA = 4,
+    SEXTA = 5,
+    SABADO = 6
 }
 ```
-!! Typescript determina enumeração de ordem para enums de forma automática, porém 
-isso pode gerar problemas, o ideal é determinar os valores de ordem de cada 
+!! Typescript determina enumeração de ordem para enums de forma automática, porém isso pode gerar problemas, o ideal é determinar os valores de ordem de cada 
 elemento da enum.
 
 #criar um metodo da classe sem a necessidade de criar uma instancia da classe:
 #usaremos o modificador static que deve ser sempre public
 #todo método static pode ser chamado diretamente da classe:
 #Não será mais um método de instancia, mas um metodo da própria classe:
+
 ```js
-				const negociacaoTemp = new Negociacao(null, 0, 0)
-        const negociacao = negociacaoTemp.criaDe(
+			const negociacaoTemp = new Negociacao(null, 0, 0)
+            const negociacao = negociacaoTemp.criaDe(
             this.inputData.value,
             this.inputQuantidade.value,
             this.inputValor.value
 )
-
-#Na classe onde foi definido o método devememos renomear para public static:
-public static criaDe(dataString: string, quantidadeString: string, valorString: string): Negociacao{
+```
+#Na classe, onde foi definido o método, devememos renomear para public static:
+```js
+    public static criaDe(dataString: string, quantidadeString: string, valorString: string): Negociacao{
         const exp = /-/g;
         const date = new Date(dataString.replace(exp, ','))
         const quantidade = parseInt(quantidadeString)
         const valor = parseFloat(valorString)
         return new Negociacao(date, quantidade, valor)
-
 }
+```
+
 #após essa mundança isso será possível:
-public adciona(): void {        
+```js
+    public adciona(): void {        
         const negociacao = Negociacao.criaDe(
             this.inputData.value,
             this.inputQuantidade.value,
@@ -207,7 +206,9 @@ public adciona(): void {
 				)
 }
 ```
-#proteger o template contra script injection
+
+#proteger o template contra script injection:
+
 ```js
 export abstract class View <T>{
 
@@ -220,7 +221,7 @@ export abstract class View <T>{
 
     public update(model: T): void {
         let template = this.template(model)
-        #precisamos de uma lógica para tratar esse parametro opcional
+        //#precisamos de uma lógica para tratar esse parametro opcional
         if(this.escapar){
             template = template.replace(/<script>[\s\S]*?<\/script>/,'')
         }
@@ -229,15 +230,14 @@ export abstract class View <T>{
     protected abstract template(model: T): string
 }
 ```
-!!Agora tornaremos essa opção de escapar opcional usando o sinal de interrogação 
-na frente do parametro.
+!!Agora tornaremos essa opção de escapar opcional usando o sinal de interrogação na frente do parametro.
 ```js
 constructor(seletor: string, escapar?: boolean)
 ```
-!!O parametro opcional não funciona como primeiro parametro, ele precisa ser o 
-último parametro, não pode ter nenhum required antes dele.
+!!O parametro opcional não funciona como primeiro parametro, ele precisa ser o último parametro, não pode ter nenhum required antes dele.
 
-#melhorar o ambiente e prepara para o próximo capítulo
+#melhorar o ambiente e prepara para o próximo capítulo 
+
 !!Remover os comentários do código compilado
 ```js
 {
@@ -253,10 +253,8 @@ constructor(seletor: string, escapar?: boolean)
 ```
 #Ativação do strictNullChecks
 O querySelector não está validando se o id do elemento existe.
-O typescript sabe que querySelector pode retornar o elemento ou null, mas por 
-padrão ele remove essa checagem padrão.
-Adicionando a propriedade strictNullChecks o typescript irá validar que o id do 
-elemento pode ser null.
+O typescript sabe que querySelector pode retornar o elemento ou null, mas por padrão ele remove essa checagem.
+Adicionando a propriedade strictNullChecks o typescript irá validar que o id do elemento pode ser null.
 ```js
 {
     "compilerOptions":{        
@@ -273,16 +271,20 @@ elemento pode ser null.
 !!Como suprimir erros, quando fizer sentido, resultantes do strictNullChecks
 No código onde recebemos o erro, usamos um "casting" para determinar que seja 
 convertido para um tipo que eu garanto que não dará problema:
-        
-this.inputData = document.querySelector('#data') as HTMLInputElement;
-this.inputQuantidade = document.querySelector('#quantidade') as HTMLInputElement;
-this.inputValor = document.querySelector('#valor') as HTMLInputElement;
+
+```js
+    this.inputData = document.querySelector('#data') as HTMLInputElement;
+    this.inputQuantidade = document.querySelector('#quantidade') as HTMLInputElement;
+    this.inputValor = document.querySelector('#valor') as HTMLInputElement;
+```        
 
 || 
 
-this.inputData = <HTMLInputElement> document.querySelector('#data');
-this.inputQuantidade = <HTMLInputElement> document.querySelector('#quantidade');
-this.inputValor = <HTMLInputElement> document.querySelector('#valor');
+```js
+    this.inputData = <HTMLInputElement> document.querySelector('#data')
+    this.inputQuantidade = <HTMLInputElement> document.querySelector('#quantidade')
+    this.inputValor = <HTMLInputElement> document.querySelector('#valor');
+```
 
 >>>Parte 3
 
@@ -307,7 +309,7 @@ Poderíamosmos usar assim, cria t1 e t2 e loga a diferença:>
 ```
 porém não é inteligente, o ideal é usar os @decorators
 
-#decorators: 
+#@decorators: 
 !!É nada mais nada menos que uma função.
 !!Antes temos que configurar o compilador para usar decorators:
 
@@ -331,19 +333,18 @@ porém não é inteligente, o ideal é usar os @decorators
 ```js
 export function logarTempoDeExecucao() {
   return function (
-                 //se colocar o decorator em um método estático target é a função    
-    target: any, //construtora da classe.
-                 //se não for metodo estático ele retorna o prototype da classe
-    propertyKey: string, // dá o nome do metodo como string que foi decorado
+    target: any, //se colocar o decorator em um método estático target é a função construtora da classe.    
+                //se não for metodo estático ele retorna o prototype da classe
+    propertyKey: string, //dá o nome do metodo como string que foi decorado
     descriptor: PropertyDescriptor //sabe tudo sobre o método que vamos executar, 
-																	 //tem referencia do método original
+								   //tem referencia do método original
   ) 
   {
     return descriptor
   };
 }
 ```
-!! Detalhes de implementação do decorator
+!! Detalhes de implementação do decorator:
 Como não sabemos a quantidade de parametros que vai chegar na função do decorator 
 usamos function(...args: Array<any>): onde os parametros passados pela função 
 será transformado em um array e será passado no args, será um Array<any> array 
@@ -373,8 +374,8 @@ export function logarTempoDeExecucao(emSegundos: boolean = false) {
                 unidade = 'segundos'
             }
             const t1 = performance.now()
-       ///chamar o metodo original
-       //como perdemos a referencia do this usaremos o metodo apply para recuperar
+            ///chamar o metodo original
+            //como perdemos a referencia do this usaremos o metodo apply para recuperar
             const retorno = metodoOriginal.apply(this, args)
             const t2 = performance.now()
             console.log(`Metodo: ${propertyKey}: Tempo de execução: ${(t2-t1)/divisor} ${unidade}.`)
@@ -387,18 +388,16 @@ export function logarTempoDeExecucao(emSegundos: boolean = false) {
 //chamaremos assim
  @logarTempoDeExecucao(true)
 ```
-!!A ordem de execução do decorator é de cima para baixo
-!!Caso não seja necessário pssar parametros para o decorator, podemos 
-retornar diretamente a funcion.
-
+!!A ordem de execução do decorator é de cima para baixo.
+!!Caso não seja necessário pssar parametros para o decorator, podemos retornar diretamente a funcion.
 ```js
 export function inspect(
   target: any,
   propertyKey: string,
   descriptor: PropertyDescriptor
 ) {
-  const metodoOriginal = descriptor.value;
-  descriptor.value = function (...args: any[]) {
+    const metodoOriginal = descriptor.value;
+    descriptor.value = function (...args: any[]) {
     console.log(`--- Método ${propertyKey}`);
     console.log(`------ parâmetros ${JSON.stringify(args)}`);
     const retorno = metodoOriginal.apply(this, args);
@@ -424,9 +423,8 @@ export function inspect(
 !!O Recomendado é sempre passar o wapper
 
 #decorator de propriedades:
-O decorator de propriedade não tem a propriedade descriptor: PropertyDescriptor
-Esse decorator é aplicado no momento de declaração da classe, o typescrit 
-modificará a classe para aplicar esse decorator.
+O decorator de propriedade não tem a propriedade: descriptor: PropertyDescriptor
+Esse decorator é aplicado no momento de declaração da classe, o typescrit modificará a classe para aplicar esse decorator.
 
 ```js
 export function domInjector(seletor: string){
@@ -451,9 +449,7 @@ export function domInjector(seletor: string){
         let elemento: HTMLElement; //aqui definimos a variavel que receberá o elemento
         const getter = function(){
             if(!elemento){
-
                 const elemento  = <HTMLElement>document.querySelector(seletor)
-
                 console.log(`Buscando emento do DOM com o seletor ${seletor} para  injetar em ${propertyKey}`)
             }         
             return elemento            
@@ -488,29 +484,18 @@ if(botaoImporta){
 ```js
     public importaDados():void {
         fetch('http://localhost:8080/dados') //fetch retorna uma promisse
-        .then(res =>{
-            return res.json();             //como sei que é um json retornno aqui
-        })
-        .then((dados: any[])=>{           //aqui não sei o tipo que chega do 
-	                                        //backend, só sei que é um array
+        .then(res =>{ return res.json()})   //como sei que é um json retornno aqui
+        .then((dados: any[])=>{             //aqui não sei o tipo que chega do backend, só sei que é um array	                                        
             return dados.map(dadosDeHoje =>{
-                return new Negociacao(
-									new Date(), 
-									dadosDeHoje.vezes, 
-									dadosDeHoje.montante) // como sei que é um array vou criar uma 
-																				//nova negociação para cada item
-            })                                                                              // a data será sempre a do dia
+                return new Negociacao(new Date(), dadosDeHoje.vezes, dadosDeHoje.montante) // como sei que é um array vou criar uma 
+																				           //nova negociação para cada item
+            })                                                                             // a data será sempre a do dia
         })
-        .then(negociacoesDeHoje => {  // aqui o typescript já infere que é um 
-																			// array do tipo negociação
-																			// de acordo com o retorno anterior
+        .then(negociacoesDeHoje => {  // aqui o typescript já infere que é um array do tipo negociação de acordo com o retorno anterior
             for(let negociacao of negociacoesDeHoje){
-                this.negociacoes.adiciona(negociacao) // aqui estou adicionando 
-																											// uma nova negociacao a 
-																											// lista de negociacoes
+                this.negociacoes.adiciona(negociacao) // aqui estou adicionando uma nova negociacao a  lista de negociacoes
             }
             this.negociacoesView.update(this.negociacoes) //aqui atualizo a view
-
         })
     }
 ```
@@ -518,8 +503,7 @@ if(botaoImporta){
 !! Melhorar esse método para que o typescript avise caso tenha erros em tempo de desenvolvimento, vamos usar interface:
 
 #Interfaces - Pode ser usada para definir tipo para os dados que receberei:
-Usado para definir um shape, uma forma para o dado que vem do backend, quero 
-tipar o dado com um tipo que vou definir
+Usado para definir um shape, uma forma para o dado que vem do backend, quero tipar o dado com um tipo que vou definir
 
 !!Interface jamais poderá ser instanciada igual a uma classe
 ```js
@@ -529,8 +513,7 @@ export interface NegociacoesDoDia{
 }
 
 ```
-#Isolar a api em uma camada de serviço
-criar uma pasta para essa classe e remover de controller
+#Isolar a api em uma camada de serviço, criar uma pasta para essa classe e remover de controller.
 ```js
 import { NegociacoesDoDia } from "../interfaces/negociacao-do-dia.js";
 import { Negociacao } from "../models/negociacao.js";
@@ -539,15 +522,10 @@ export class NegociacoesService{
 
     public obterNegociacoesDoDia(): Promise<Negociacao[]>{
         return fetch('http://localhost:8080/dados')
-            .then(res =>{
-                return res.json();
-            })
+            .then(res =>{return res.json()})
             .then((dados: NegociacoesDoDia[])=>{
                 return dados.map(dadosDeHoje =>{
-                    return new Negociacao(
-														new Date(), 
-														dadosDeHoje.vezes, 
-														dadosDeHoje.montante)
+                    return new Negociacao(new Date(), dadosDeHoje.vezes, dadosDeHoje.montante)
                 })
             })
     }
@@ -563,11 +541,10 @@ export class NegociacoesService{
         console.log(JSON.stringify(this.negociacoes, null, 2)) //assim exibo identado
 ```
 ```js
-!!Adicionar os metodos paraTexto nas classes negociacao e negociacoes
+!!Adicionar os metodos paraTexto nas classes negociacao e negociacoes:
    public paraTexto(): string {
         return ` Data: ${this.data}, Quantidade: ${this.quantidade}, Valor: ${this.valor}`
-    }
-    
+    }    
     public paraTexto(): string{
         return JSON.stringify(this.negociacoes, null, 2)//assim exibo identado
     }
@@ -576,19 +553,17 @@ export class NegociacoesService{
 #Polimorfismo
 !! Capacidade que um objeto tem de ser referenciado de multiplas formas
 
-!!Classe abstrata que não implementamos o construtor ele está subentendido
-criaremos a classe abstrata imprimivel
+!!Classe abstrata que não implementamos o construtor ele está subentendido criaremos a classe abstrata imprimivel:
 ```js
 export abstract class imprimivel {
     constructor(){}    //aqui
     public abstract paraTexto(): string;
 }
 ``` 
-#Agora falo que a classe imprimir receberá um parametro do tipo imprimivel
-onde serei obrigado a implementar o método e a classe que herdar terá que implementar o metodo paraTexto()
+#Agora falo que a classe imprimir receberá um parametro do tipo imprimivel onde serei obrigado a implementar o método e a classe que 
+herdar terá que implementar o metodo paraTexto()
 ```js
 import { Imprimivel } from "./imprimivel.js";
-
 export function imprimir(...objetos: Imprimivel[]) { //aqui digo que aceito qq objeto que seja imprimivel
   for (let objeto of objetos) {
     console.log(objeto.paraTexto());
@@ -596,9 +571,8 @@ export function imprimir(...objetos: Imprimivel[]) { //aqui digo que aceito qq o
 }
 
 ```
-!!Quando a classe está extendendo outra, o contrutor será sobrescrito, para 
-garantir que o contrutor da classe será iniciado devemos chamar o, 
-contrutor super que é da super classe
+!!Quando a classe está extendendo outra, o contrutor será sobrescrito, para garantir que o contrutor da classe será iniciado devemos chamar o, 
+contrutor super que é da super() classe
 
 ```js
 export class Negociacao extends imprimivel{
@@ -611,21 +585,17 @@ export class Negociacao extends imprimivel{
     }
 
 ```
-!!Com o poliformismo posso ter 30 mil objetos no sistema, se todos herdarem e 
-extender imprimivel e implementar o metodo abstrato imprimivel, o metodo 
+!!Com o poliformismo posso ter 30 mil objetos no sistema, se todos herdarem e extender imprimivel e implementar o metodo abstrato imprimivel, o metodo 
 imprimir vai rodar.
 
 #implements
-!!Sempre que temos um comportamente e queremos garantir esse comportamento em 
-diversas classes e não quero usar herança, devemos usar uma interface.
+!!Sempre que temos um comportamente e queremos garantir esse comportamento em diversas classes e não quero usar herança, devemos usar uma interface.
 
 !!toda interface é publica e todo metodo de uma interface é abstrato.
-!!para obrigar que uma classe assine o contrato com uma interface usamos 
-o implements
+!!para obrigar que uma classe assine o contrato com uma interface usamos o implements
 !!Posso implementar quantas interfaces eu quiser.
 
 #Comparar se as negociações são iguais antes de importar:
-
 Criar o méto ehIgual() na classe negociação
 ```js
     public ehIgual(negociacao: Negociacao): boolean {
@@ -636,7 +606,7 @@ Criar o méto ehIgual() na classe negociação
 
 ```
 
-No controller mudar o metodo importarDados:
+!!No controller mudar o metodo importarDados:
 ```js
  public importaDados():void {
         this.negociacoesService
@@ -670,7 +640,6 @@ export interface Comparavel{
     ehIgual(objeto: any): boolean;
 }
 ```
-
 Agora mudaremos para Interface Generics passando o tipo <T>
 
 ```js
@@ -678,15 +647,13 @@ Agora mudaremos para Interface Generics passando o tipo <T>
     ehIgual(objeto: T): boolean;
 }
 ```
-!!Agora estamos usando a interface para obrigar o dev a implementar o metodo é 
-igual e estamos usando generics para dizer qual será o tipo
+
+!!Agora estamos usando a interface para obrigar o dev a implementar o metodo ehIgual() e estamos usando generics para dizer qual será o tipo
 do objeto recebido como parametro na comparação.
 
-Agora vamos evitar a necessidade de ficar repetindo essa utilização de interface 
-com generics e a implementação do Imprimivel e Comparavel em todas as classes:
+Agora vamos evitar a necessidade de ficar repetindo essa utilização de interface com generics e a implementação do Imprimivel e Comparavel em todas as classes:
 
-!!Uma classe só pode extender uma outra classe, não existe herança multipla em TS,
-mas uma interface pode externder quantas interfaces quiser.
+!!Uma classe só pode extender uma outra classe, não existe herança multipla em TS, mas uma interface pode extender quantas interfaces quiser.
 
 ```js
 import { Imprimivel } from "../utils/imprimivel.js";
@@ -696,11 +663,9 @@ export interface Modelo<T> extends Imprimivel, Comparavel<T>{
 
 }
 ```
-Agora quem implementar a interface Modelo é obrigado a implementar o método 
-Imprimivel e Comparavel.
+Agora quem implementar a interface Modelo é obrigado a implementar o método Imprimivel e Comparavel.
 
-!!Podemos usar o extends para quantas interfaces eu quiser, só não podemos fazer 
-uma classe usar extends para mais de uma.
+!!Podemos usar o extends para quantas interfaces eu quiser, só não podemos fazer uma classe usar extends para mais de uma.
 
 #Debugar código em TypeScript:
 Alterar o tsconfig.json
