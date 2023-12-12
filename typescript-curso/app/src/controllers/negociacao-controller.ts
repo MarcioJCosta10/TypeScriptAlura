@@ -70,8 +70,7 @@ export class NegociacaoController {
     }
 
     private ehDiaUtil(data: Date) {
-        return data.getDay() > DiasDaSemana.DOMINGO
-            && data.getDay() < DiasDaSemana.SABADO;
+        return data.getDay() > DiasDaSemana.DOMINGO && data.getDay() < DiasDaSemana.SABADO;
     }
 
     private limparFormulario(): void {

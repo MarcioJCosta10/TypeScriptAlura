@@ -53,8 +53,7 @@ export class NegociacaoController {
         });
     }
     ehDiaUtil(data) {
-        return data.getDay() > DiasDaSemana.DOMINGO
-            && data.getDay() < DiasDaSemana.SABADO;
+        return data.getDay() > DiasDaSemana.DOMINGO && data.getDay() < DiasDaSemana.SABADO;
     }
     limparFormulario() {
         this.inputData.value = '';
